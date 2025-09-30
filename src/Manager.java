@@ -1,37 +1,150 @@
+import java.nio.channels.ScatteringByteChannel;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class Manager {
+    int userInput;
     public HashMap<Long, Task> tasks = new HashMap<Long, Task>();
     public HashMap<Long, Subtask> subtasks = new HashMap<>();
     public HashMap<Long, Epic> epics = new HashMap<>();
 
+    Scanner scanner = new Scanner(System.in);
+
     int id = 1;
 
-    // 1
+    //  CREATE TASK: TASK
     public void createTask(Task task){
         tasks.put(task.id, task);
         System.out.println("Task created!");
 
     }
+
+    // CREATE TASK: SUBTASK
     public void createTask(Subtask subtask){
         subtasks.put(subtask.id, subtask);
         System.out.println("Subtask created!");
     }
 
+    // CREATE TASK: EPIC TASK
     public void createTask(Epic epic){
         epics.put(epic.id, epic);
         System.out.println("Epic created!");
     }
 
-    // 2
+
+    // UPDATE TASK
     public void updateTask(Task task, long id){
-        System.out.println("hihih updateTask");
+        System.out.println("New Name: ");
+        String newName = scanner.next();
+        if(!newName.isEmpty()) task.name = newName;
+
+        System.out.println("New Description: ");
+        String newDescription = scanner.next();
+        if(!newDescription.isEmpty()) task.description = newDescription;
+
+        System.out.println("New Status: [1] NEW\n[2] IN_PROGRESS\n[3] DONE");
+        while(true){
+            while(!scanner.hasNextInt()){
+                System.out.println("Invalid user input! Try again.");
+                scanner.next();
+                continue;
+            }
+            userInput = scanner.nextInt();
+            if(userInput > 3 || userInput < 0 ){
+                System.out.println("Invalid user input! Try again.");
+                continue;
+            } else break;
+        }
+        switch(userInput){
+            case 1 -> {
+                if(task.status != Status.NEW) task.status = Status.DONE;
+            }
+            case 2 -> {
+                if(task.status != Status.IN_PROGRESS) task.status = Status.DONE;
+            }
+            case 3 -> {
+                if(task.status != Status.DONE) task.status = Status.IN_PROGRESS;
+            }
+        }
+    }
+
+    // UPDATE SUBTASK
+    public void updateTask(Subtask subtask, long id){
+        System.out.println("New Name: ");
+        String newName = scanner.next();
+        if(!newName.isEmpty()) subtask.name = newName;
+
+        System.out.println("New Description: ");
+        String newDescription = scanner.next();
+        if(!newDescription.isEmpty()) subtask.description = newDescription;
+
+        System.out.println("New Status: [1] NEW\n[2] IN_PROGRESS\n[3] DONE");
+        while(true){
+            while(!scanner.hasNextInt()){
+                System.out.println("Invalid user input! Try again.");
+                scanner.next();
+                continue;
+            }
+            userInput = scanner.nextInt();
+            if(userInput > 3 || userInput < 0 ){
+                System.out.println("Invalid user input! Try again.");
+                continue;
+            } else break;
+        }
+        switch(userInput){
+            case 1 -> {
+                if(subtask.status != Status.NEW) subtask.status = Status.DONE;
+                Helpers.recheckEpic(epics.get(subtask.parentId));
+            }
+            case 2 -> {
+                if(subtask.status != Status.IN_PROGRESS) subtask.status = Status.DONE;
+                Helpers.recheckEpic(epics.get(subtask.parentId));
+            }
+            case 3 -> {
+                if(subtask.status != Status.DONE) subtask.status = Status.IN_PROGRESS;
+                Helpers.recheckEpic(epics.get(subtask.parentId));
+            }
+        }
 
     }
 
 
-    // 3
+    // UPDATE EPIC TASK
+    public void updateTask(Epic epic, long id){
+
+
+        System.out.println("If you don't wanna changes: just press Enter");
+        System.out.println("New Name: ");
+        String newName = scanner.next();
+        if(!newName.isEmpty()) epic.name = newName;
+
+        System.out.println("New Description: ");
+        String newDescription = scanner.next();
+        if(!newDescription.isEmpty()) epic.description = newDescription;
+
+        System.out.println("New Status: [1] NEW\n[2] IN_PROGRESS\n[3] DONE");
+        while(true){
+            while(!scanner.hasNextInt()){
+                System.out.println("Invalid user input! Try again.");
+                scanner.next();
+                continue;
+            }
+            userInput = scanner.nextInt();
+            if(userInput > 3 || userInput < 0 ){
+                System.out.println("Invalid user input! Try again.");
+                continue;
+            } else break;
+        }
+        switch(userInput) {
+            case 1 -> epic.status = Status.DONE;
+            case 2 -> epic.status = Status.DONE;
+            case 3 -> epic.status = Status.IN_PROGRESS;
+        }
+
+    }
+
+
+    // GET TASKS
     public void getTasks(){
         System.out.println("All Tasks:");
         for(Task task : tasks.values()){
@@ -62,7 +175,7 @@ public class Manager {
 
     }
 
-    // 4
+    // GET TASKS BY ID
     public void getById(long id){
         if(tasks.containsKey(id)){
             Task task = tasks.get(id);
@@ -102,7 +215,7 @@ public class Manager {
 
     }
 
-    // 5
+    // DELETE
     public void deleteTasks(){
         System.out.println("This function will delete all the tasks. Are you sure? Y/N");
         Scanner scanner = new Scanner(System.in);
@@ -124,42 +237,26 @@ public class Manager {
     }
 
 
-    //6
+    // DELETE BY DI
     public void deleteById(long id){
         if(tasks.containsKey(id)){
             System.out.println("Task found!");
-            System.out.println("Info:");
-            System.out.println("Task ID: " + tasks.get(id).id);
-            System.out.println("Name: " + tasks.get(id).name);
-            System.out.println("Description: " + tasks.get(id).description);
-            System.out.println("Status: " + tasks.get(id).status);
             System.out.println("Removing...");
             tasks.remove(id);
         } else if(subtasks.containsKey(id)){
             System.out.println("Subtask found!");
-            System.out.println("Info:");
-            System.out.println("Subtask ID: " + subtasks.get(id).id);
-            System.out.println("Name: " + subtasks.get(id).name);
-            System.out.println("Description: " + subtasks.get(id).description);
-            System.out.println("Status: " + subtasks.get(id).status);
             System.out.println("Removing...");
             subtasks.remove(id);
         } else if(epics.containsKey(id)){
             System.out.println("Epic found!");
-            System.out.println("Info:");
-            System.out.println("Epic ID: " + epics.get(id).id);
-            System.out.println("Name: " + epics.get(id).name);
-            System.out.println("Description: " + epics.get(id).description);
-            System.out.println("Status: " + epics.get(id).status);
-            System.out.println("Subtasks: ");
-            for(Subtask subtask : subtasks.values()){
-                System.out.println("Subtask ID: " + subtask.id);
-                System.out.println("Name: " + subtask.name);
-                System.out.println("Description: " + subtask.description);
-                System.out.println("Status: " + subtask.status + "\n");
-            }
             System.out.println("Removing...");
             epics.remove(id);
+
+            for(Subtask subtask : subtasks.values()){
+                if(subtask.parentId == id){
+                    subtasks.remove(id);
+                }
+            }
         } else {
             System.out.println("Invalid input! Back to menu...");
             return ;
