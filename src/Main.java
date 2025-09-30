@@ -143,6 +143,21 @@ public class Main {
 //                    case 2
                 case 3 -> manager.getTasks();
                 case 5 -> manager.deleteTasks();
+                case 6 -> {
+                    System.out.println("What would you like to delete?");
+                    while(true){
+                        if(!scanner.hasNextInt()){
+                            System.out.println("Invalid input! Please try again.");
+                            scanner.next();
+                            continue;
+                        }
+                        userInput = scanner.nextInt();
+                        manager.deleteById(userInput);
+
+                        break;
+                    }
+
+                }
                 case 4 -> {
                     System.out.println("Input the task's ID");
 
@@ -152,7 +167,7 @@ public class Main {
                             scanner.next();
                         }
                         userInput = scanner.nextInt();
-                        if(manager.tasks.containsKey((long)userInput)
+                        if(!manager.tasks.containsKey((long)userInput)
                         && !manager.subtasks.containsKey((long)userInput)
                         && !manager.epics.containsKey((long)userInput)){
                             System.out.println("Invalid user input! Try again.");
