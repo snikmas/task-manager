@@ -1,35 +1,25 @@
-import java.util.HashMap;
 import java.util.Scanner;
 
-public class Manager {
-    int userInput;
-    public HashMap<Long, Task> tasks = new HashMap<Long, Task>();
-    public HashMap<Long, Subtask> subtasks = new HashMap<>();
-    public HashMap<Long, Epic> epics = new HashMap<>();
+public class InMemoryTaskManager implements TaskManager {
 
-    Scanner scanner = new Scanner(System.in);
-
+    int userInput = 0;
     int id = 1;
 
-    //  CREATE TASK: TASK
     public void createTask(Task task){
         tasks.put(task.id, task);
         System.out.println("Task created!");
 
     }
 
-    // CREATE TASK: SUBTASK
     public void createTask(Subtask subtask){
         subtasks.put(subtask.id, subtask);
         System.out.println("Subtask created!");
     }
 
-    // CREATE TASK: EPIC TASK
     public void createTask(Epic epic){
         epics.put(epic.id, epic);
         System.out.println("Epic created!");
     }
-
 
     // UPDATE TASK
     public void updateTask(Task task, long id){
@@ -105,7 +95,7 @@ public class Manager {
             }
         }
 
-    }
+    };
 
 
     // UPDATE EPIC TASK
@@ -140,81 +130,82 @@ public class Manager {
             case 3 -> epic.status = Status.IN_PROGRESS;
         }
 
-    }
+    };
 
-
-    // GET TASKS
     public void getTasks(){
-        System.out.println("All Tasks:");
-        for(Task task : tasks.values()){
-            System.out.println("Task id: " + task.id);
-            System.out.println("Task name: " + task.name);
-            System.out.println("Task description: " + task.description);
-            System.out.println("Task status: " + task.status + "\n");
-        }
-
-        System.out.println("---------------------\nAll Epics and their subtasks:");
-        for(Epic epic : epics.values()){
-            System.out.println("Epic id: " + epic.id);
-            System.out.println("Epic name: " + epic.name);
-            System.out.println("Epic description: " + epic.description);
-            System.out.println("Epic status: " + epic.status + "\n");
-            System.out.println("Epic's subtasks:");
-            for(Subtask subtask : subtasks.values()){
-                System.out.println("Subtask id: " + subtask.id);
-                System.out.println("Subtask name: " + subtask.name);
-                System.out.println("Subtask description: " + subtask.description);
-                System.out.println("Subtask status: " + subtask.status + "\n---------------------");
-
+        {
+            System.out.println("All Tasks:");
+            for(Task task : tasks.values()){
+                System.out.println("Task id: " + task.id);
+                System.out.println("Task name: " + task.name);
+                System.out.println("Task description: " + task.description);
+                System.out.println("Task status: " + task.status + "\n");
             }
-            System.out.println("\n");
+
+            System.out.println("---------------------\nAll Epics and their subtasks:");
+            for(Epic epic : epics.values()){
+                System.out.println("Epic id: " + epic.id);
+                System.out.println("Epic name: " + epic.name);
+                System.out.println("Epic description: " + epic.description);
+                System.out.println("Epic status: " + epic.status + "\n");
+                System.out.println("Epic's subtasks:");
+                for(Subtask subtask : subtasks.values()){
+                    System.out.println("Subtask id: " + subtask.id);
+                    System.out.println("Subtask name: " + subtask.name);
+                    System.out.println("Subtask description: " + subtask.description);
+                    System.out.println("Subtask status: " + subtask.status + "\n---------------------");
+
+                }
+                System.out.println("\n");
+            }
+
+            System.out.println("Back to main menu...");
+
         }
-
-        System.out.println("Back to main menu...");
-
     }
 
-    // GET TASKS BY ID
     public void getById(long id){
-        if(tasks.containsKey(id)){
-            Task task = tasks.get(id);
-            System.out.println("Task found!");
-            System.out.println("Info:");
-            System.out.println("Task ID: " + task.id);
-            System.out.println("Name: " + task.name);
-            System.out.println("Description: " + task.description);
-            System.out.println("Status: " + task.status);
-        } else if(subtasks.containsKey(id)){
-            Subtask subtask = subtasks.get(id);
-            System.out.println("Subtask found!");
-            System.out.println("Info:");
-            System.out.println("Subtask ID: " + subtask.id);
-            System.out.println("Name: " + subtask.name);
-            System.out.println("Description: " + subtask.description);
-            System.out.println("Status: " + subtask.status);
-            System.out.println("Belongs to: " + epics.get(subtask.parentId).name);
-        } else if(epics.containsKey(id)){
-            Epic epic = epics.get(id);
-            System.out.println("Epic found!");
-            System.out.println("Info:");
-            System.out.println("Epic ID: " + epic.id);
-            System.out.println("Name: " + epic.name);
-            System.out.println("Description: " + epic.description);
-            System.out.println("Status: " + epic.status);
-            System.out.println("Subtasks: ");
-            for(Subtask subtask : subtasks.values()){
+        {
+            if(tasks.containsKey(id)){
+                Task task = tasks.get(id);
+                System.out.println("Task found!");
+                System.out.println("Info:");
+                System.out.println("Task ID: " + task.id);
+                System.out.println("Name: " + task.name);
+                System.out.println("Description: " + task.description);
+                System.out.println("Status: " + task.status);
+            } else if(subtasks.containsKey(id)){
+                Subtask subtask = subtasks.get(id);
+                System.out.println("Subtask found!");
+                System.out.println("Info:");
                 System.out.println("Subtask ID: " + subtask.id);
                 System.out.println("Name: " + subtask.name);
                 System.out.println("Description: " + subtask.description);
                 System.out.println("Status: " + subtask.status);
+                System.out.println("Belongs to: " + epics.get(subtask.parentId).name);
+            } else if(epics.containsKey(id)){
+                Epic epic = epics.get(id);
+                System.out.println("Epic found!");
+                System.out.println("Info:");
+                System.out.println("Epic ID: " + epic.id);
+                System.out.println("Name: " + epic.name);
+                System.out.println("Description: " + epic.description);
+                System.out.println("Status: " + epic.status);
+                System.out.println("Subtasks: ");
+                for(Subtask subtask : subtasks.values()){
+                    System.out.println("Subtask ID: " + subtask.id);
+                    System.out.println("Name: " + subtask.name);
+                    System.out.println("Description: " + subtask.description);
+                    System.out.println("Status: " + subtask.status);
+                }
             }
+
+            System.out.println("Back to menu...");
+
         }
 
-        System.out.println("Back to menu...");
+    };
 
-    }
-
-    // DELETE
     public void deleteTasks(){
         System.out.println("This function will delete all the tasks. Are you sure? Y/N");
         Scanner scanner = new Scanner(System.in);
@@ -233,10 +224,8 @@ public class Manager {
         }
 
 
-    }
+    };
 
-
-    // DELETE BY DI
     public void deleteById(long id){
         if(tasks.containsKey(id)){
             System.out.println("Task found!");
@@ -266,6 +255,37 @@ public class Manager {
 
     }
 
+    public void history(){
+        System.out.println("History:");
+        for(int i = 0; i < history.size(); i++){
+            Task task = tasks.get(history.get(i).id);
+            System.out.println("The #" + i);
+            System.out.println("Task id: " + task.id);
+            System.out.println("Task name: " + task.name);
+            System.out.println("Task description: " + task.description);
+            System.out.println("Task status: " + task.status);
+            if(task instanceof Epic){
+                System.out.println("Subtasks: ");
+                if(subtasks.isEmpty()){
+                    System.out.println("No subtasks found!");
+                } else {
+                    for(Subtask subtask : subtasks.values()){
+                        System.out.println("Subtask id: " + subtask.id);
+                        System.out.println("Name: " + subtask.name);
+                        System.out.println("Description: " + subtask.description);
+                        System.out.println("Status: " + subtask.status);
+                }
+            } else if (task instanceof Subtask){
+                    if(task.parentId > 0){
+
+                    }
+                }
+
+            }
+            System.out.println("\n");
+
+        }
+    };
+
 
 }
-

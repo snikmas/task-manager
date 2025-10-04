@@ -3,7 +3,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
 
-        Manager manager = new Manager();
+        InMemoryTaskManager manager = new InMemoryTaskManager();
         System.out.println("Welcome to TaskManager!");
         Scanner scanner = new Scanner(System.in);
         int userInput;
